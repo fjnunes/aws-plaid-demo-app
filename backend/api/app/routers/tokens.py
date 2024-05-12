@@ -56,8 +56,9 @@ def create_link_token() -> Dict[str, str]:
     tracer.put_annotation(key="UserId", value=user_id)
 
     request = LinkTokenCreateRequest(
-        products=[Products("transactions")],
-        client_name="plaidaws",
+        products=[Products("liabilities")],
+        required_if_supported_products=[Products("statements")],
+        client_name="Lab360",
         country_codes=[CountryCode("US")],
         language="en",
         webhook=WEBHOOK_URL,
