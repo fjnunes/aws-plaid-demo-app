@@ -12,6 +12,21 @@ export default function Plaid({ getItems }) {
   const [connecting, setConnecting] = useState(false);
   const [token, setToken] = useState(null);
 
+  const handleGetIncomeToken = async () => {
+    setConnecting(true);
+    try {
+      const { body } = await get({
+        apiName,
+        path: '/v1/tokens/income'
+      }).response;
+      const data = await body.json();
+      logger.debug('GET /v1/tokens/income response:', data);
+      setToken(data.link_token);
+    } catch (err) {
+      logger.error('unable to create link token:', err);
+    }
+  };
+
   const handleGetToken = async () => {
     setConnecting(true);
     try {
@@ -56,6 +71,13 @@ export default function Plaid({ getItems }) {
         onClick={handleGetToken}
       >
         CONNECT WITH PLAID
+      </Button>
+      <Button
+        variation="primary"
+        isLoading={connecting}
+        onClick={handleGetIncomeToken}
+      >
+        Get Income with Plaid
       </Button>
       {token ? (
         <PlaidLink
