@@ -31,7 +31,7 @@ export default function Plaid({ product, getItems }) {
     try {
       const { body } = await post({
         apiName,
-        path: '/v1/tokens/'+product,
+        path: '/v1/tokens',
         options: {
           body: {
             public_token,
