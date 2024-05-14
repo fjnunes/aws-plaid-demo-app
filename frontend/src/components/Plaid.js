@@ -55,7 +55,7 @@ export default function Plaid({ product, getItems }) {
         isLoading={connecting}
         onClick={handleGetToken}
       >
-        CONNECT WITH PLAID
+        Get {product} with PLAID
       </Button>
       {token ? (
         <PlaidLink

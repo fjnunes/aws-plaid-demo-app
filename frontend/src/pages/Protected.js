@@ -30,7 +30,7 @@ export default function Protected() {
 
   return (
     <Flex direction="column">
-      <Plaid getItems={getItems}/>
+      <Plaid product="transactions" getItems={getItems}/>
       <Plaid product="income" getItems={getItems}/>
       {(items && items.length) ? (
         <View>
