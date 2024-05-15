@@ -14,7 +14,7 @@ export default function Plaid({ label, product, getItems }) {
 
   const handleGetToken = async () => {
     setConnecting(true);
-    // try {
+    try {
       const { body } = await get({
         apiName,
         path: '/v1/tokens/'+product
@@ -22,14 +22,14 @@ export default function Plaid({ label, product, getItems }) {
       const data = await body.json();
       logger.debug('GET /v1/tokens response:', data);
       setToken(data.link_token);
-    // } catch (err) {
-    //   logger.error('unable to create link token:', err);
-    //   setConnecting(false);
-    // }
+    } catch (err) {
+      logger.error('unable to create link token:', err);
+      setConnecting(false);
+    }
   };
 
   const handleSuccess = async (public_token, metadata) => {
-    // try {
+    try {
       const { body } = await post({
         apiName,
         path: '/v1/tokens',
@@ -44,10 +44,10 @@ export default function Plaid({ label, product, getItems }) {
       logger.debug('POST /v1/tokens response:', data);
       getItems();
       setConnecting(false);
-    // } catch (err) {
-    //   logger.error('unable to exchange public token', err);
-    //   setConnecting(false);
-    // }
+    } catch (err) {
+      logger.error('unable to exchange public token', err);
+      setConnecting(false);
+    }
   };
 
   return (
