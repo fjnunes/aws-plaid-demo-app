@@ -8,7 +8,7 @@ const logger = new ConsoleLogger("Plaid");
 
 const apiName = "plaidapi";
 
-export default function Plaid({ product, getItems }) {
+export default function Plaid({ label, product, getItems }) {
   const [connecting, setConnecting] = useState(false);
   const [token, setToken] = useState(null);
 
@@ -55,7 +55,7 @@ export default function Plaid({ product, getItems }) {
         isLoading={connecting}
         onClick={handleGetToken}
       >
-        {Label}
+        {label}
       </Button>
       {token ? (
         <PlaidLink
