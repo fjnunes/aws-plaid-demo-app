@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { get, post } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { Button, Flex } from '@aws-amplify/ui-react';
+import { Button, Flex, Label } from '@aws-amplify/ui-react';
 import PlaidLink from './PlaidLink';
 
 const logger = new ConsoleLogger("Plaid");
@@ -55,7 +55,7 @@ export default function Plaid({ product, getItems }) {
         isLoading={connecting}
         onClick={handleGetToken}
       >
-        Get {product} with PLAID
+        {Label}
       </Button>
       {token ? (
         <PlaidLink
