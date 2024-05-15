@@ -30,6 +30,14 @@ from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchan
 from plaid.model.item_public_token_exchange_response import ItemPublicTokenExchangeResponse
 from plaid.model.products import Products
 from plaid.model.country_code import CountryCode
+from plaid.model.products import Products
+from datetime import datetime, timedelta
+
+from plaid.model.link_token_create_request_income_verification import LinkTokenCreateRequestIncomeVerification
+from plaid.model.income_verification_source_type import IncomeVerificationSourceType
+from plaid.model.link_token_create_request_income_verification_bank_income import LinkTokenCreateRequestIncomeVerificationBankIncome
+from plaid.model.link_token_create_request_income_verification_payroll_income import LinkTokenCreateRequestIncomeVerificationPayrollIncome
+
 
 from app import utils, constants, datastore, exceptions
 
@@ -47,32 +55,72 @@ router = Router()
 dynamodb: DynamoDBServiceResource = boto3.resource("dynamodb", config=constants.BOTO3_CONFIG)
 
 
-@router.get("/")
-@tracer.capture_method(capture_response=False)
-def create_link_token() -> Dict[str, str]:
-    user_id: str = utils.authorize_request(router)
 
-    logger.append_keys(user_id=user_id)
-    tracer.put_annotation(key="UserId", value=user_id)
+# Function to create a link token for the specified product
+def create_link_token(product: str, user_id: str) -> Dict[str, str]:
+    # Set the date range for statements 
+    start_date = (datetime.now() - timedelta(days=30)).date()
+    end_date = datetime.now().date()
+    statements = {
+        "start_date": start_date,
+        "end_date": end_date
+    }
 
-    request = LinkTokenCreateRequest(
-        products=[Products("statements")],
-        client_name="Lab360",
-        country_codes=[CountryCode("US")],
-        language="en",
-        webhook=WEBHOOK_URL,
-        user=LinkTokenCreateRequestUser(client_user_id=user_id),
-    )
+    # Define the products
+    products = [Products(product)]
+    
+    # Adjust request parameters based on product type
+    if product == "income_verification":
+        request = LinkTokenCreateRequest(
+            products=products,
+            required_if_supported_products=[Products("statements")],
+            income_verification=LinkTokenCreateRequestIncomeVerification(
+                income_source_types=[IncomeVerificationSourceType('payroll')],
+                payroll_income=LinkTokenCreateRequestIncomeVerificationPayrollIncome(),
+            ),
+            statements=statements,
+            client_name="Lab360",  # Change as needed
+            country_codes=[CountryCode("US")],
+            language="en",
+            webhook=WEBHOOK_URL,
+            user=LinkTokenCreateRequestUser(client_user_id=user_id),
+        )
+    else:
+        request = LinkTokenCreateRequest(
+            products=products,
+            required_if_supported_products=[Products("statements")],
+            statements=statements,
+            client_name="Lab360",  # Change as needed
+            country_codes=[CountryCode("US")],
+            language="en",
+            webhook=WEBHOOK_URL,
+            user=LinkTokenCreateRequestUser(client_user_id=user_id),
+        )
 
+    # Get the Plaid client
     client = utils.get_plaid_client()
 
     try:
-        response: LinkTokenCreateResponse = client.link_token_create(request)
+        # Create the link token
+        response = client.link_token_create(request)
     except plaid.ApiException:
         logger.exception("Unable to create link token")
         raise InternalServerError("Failed to create link token")
 
+    # Return the link token
     return {"link_token": response.link_token}
+
+
+# Lambda handler for the /tokens endpoint
+@router.get("/<product>")
+@tracer.capture_method(capture_response=False)
+def get_link_token(product: str) -> Dict[str, str]:
+    user_id: str = utils.authorize_request(router)
+    logger.append_keys(user_id=user_id)
+    tracer.put_annotation(key="UserId", value=user_id)
+    
+    # Adjust the product type based on the endpoint URL
+    return create_link_token(product, user_id)
 
 
 @router.post("/")
@@ -93,10 +141,14 @@ def exchange_token() -> Response:
     if not metadata:
         raise BadRequestError("Metadata not found in request")
 
+    # institution = metadata.get("institution", {})
+    # institution_id = institution.get("institution_id")
+    # if not institution_id:
+    #     raise BadRequestError("Institution ID not found in request")
+
+    # Handle institution data conditionally based on the product
     institution = metadata.get("institution", {})
-    institution_id = institution.get("institution_id")
-    if not institution_id:
-        raise BadRequestError("Institution ID not found in request")
+    institution_id = institution.get("institution_id", None)  # Default to None if not found
 
     if datastore.check_institution(user_id, institution_id):
         raise exceptions.ConflictError("User has already linked to this institution")
