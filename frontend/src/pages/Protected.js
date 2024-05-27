@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
+import { get, post } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
 import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
@@ -7,6 +8,8 @@ import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
 
 const logger = new ConsoleLogger("Protected");
+
+const apiName = "plaidapi";
 
 export default function Protected() {
   const [items, setItems] = useState([]);
@@ -26,7 +29,7 @@ export default function Protected() {
 
   const downloadStatements = async () => {
     try {
-      const response = await fetch('/v1/statements/download', {
+      const response = await fetch('https://7ed2js9stl.execute-api.us-east-1.amazonaws.com/v1/statements/download', {
         method: 'GET',
       });
 
@@ -34,12 +37,29 @@ export default function Protected() {
         const redirectUrl = response.headers.get('Location');
         window.location.href = redirectUrl;
       } else {
-        const errorText = await response.text(); // Read the error text
-        logger.error('Failed to get download URL', errorText); // Log the error text
-        alert(`Error: ${errorText}`); // Display the error text
+        logger.error('Failed to get download URL');
       }
     } catch (err) {
       logger.error('Error downloading statements', err);
+    }
+
+    try {
+      const { body, statusCode, headers } = await get({
+        apiName,
+        path: '/v1/statements/download'
+      }).response;
+      const data = await body.json();
+      logger.debug('GET /v1/statements/download response:', data);
+      
+      if (statusCode === 302) {
+        const redirectUrl = headers.get('Location');
+        window.location.href = redirectUrl;
+      } else {
+        logger.error('Failed to get download URL');
+      }
+
+    } catch (err) {
+      logger.error('unable to download statement:', err);
     }
   }
 
