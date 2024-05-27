@@ -28,21 +28,7 @@ export default function Protected() {
   }
 
   const downloadStatements = async () => {
-    try {
-      const response = await fetch('https://7ed2js9stl.execute-api.us-east-1.amazonaws.com/v1/statements/download', {
-        method: 'GET',
-      });
-
-      if (response.status === 302) {
-        const redirectUrl = response.headers.get('Location');
-        window.location.href = redirectUrl;
-      } else {
-        logger.error('Failed to get download URL');
-      }
-    } catch (err) {
-      logger.error('Error downloading statements', err);
-    }
-
+    
     try {
       const { body, statusCode, headers } = await get({
         apiName,
