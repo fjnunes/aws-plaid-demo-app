@@ -34,7 +34,9 @@ export default function Protected() {
         const redirectUrl = response.headers.get('Location');
         window.location.href = redirectUrl;
       } else {
-        logger.error('Failed to get download URL', await response.json());
+        const errorText = await response.text(); // Read the error text
+        logger.error('Failed to get download URL', errorText); // Log the error text
+        alert(`Error: ${errorText}`); // Display the error text
       }
     } catch (err) {
       logger.error('Error downloading statements', err);
