@@ -24,9 +24,10 @@ export default function Layout() {
           <Button onClick={() => logOut()}>Logout</Button>
         )}
       </nav>
-      <Heading level={2}>Plaid AWS Quickstart</Heading>
+      <Heading level={2}>Lab360 Disclosures</Heading>
       <View>
         {route === 'authenticated' ? `Welcome ${user.signInDetails?.loginId}` : 'Please Login!'}
+        <p>Statements from all your accounts in one place: checking, savings, brokerages, retirement, student loans, mortgages, etc.</p>
       </View>
 
       <Outlet />
