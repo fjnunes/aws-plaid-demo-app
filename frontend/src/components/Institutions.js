@@ -6,7 +6,7 @@ export default function Institutions({ institutions = []}) {
     <Table highlightOnHover={true} variation="striped">
       <TableHead>
         <TableRow>
-          <TableCell as="th">Name</TableCell>
+          <TableCell as="th">Linked Institutions</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

@@ -59,12 +59,11 @@ export default function Protected() {
 
   return (
     <Flex direction="column">
-      <Plaid label="Add a new account" product="statements" getItems={getItems} />
+      <Plaid label="Add new accounts" product="statements" getItems={getItems} />
       <Button onClick={downloadStatements}>Done with linking your accounts? Click here to download your statements</Button>
 
       {(items && items.length) ? (
         <View>
-          <Heading>Institutions</Heading>
           <Institutions institutions={items} />
         </View>
       ) : (
