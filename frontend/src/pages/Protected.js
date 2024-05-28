@@ -30,15 +30,15 @@ export default function Protected() {
   const downloadStatements = async () => {
     
     try {
-      const { body, statusCode, headers } = await get({
+      const { body } = await get({
         apiName,
         path: '/v1/statements/download'
       }).response;
       const data = await body.json();
       logger.debug('GET /v1/statements/download response:', data);
       
-      if (statusCode === 302) {
-        const redirectUrl = headers.Location;
+      if (data.statusCode === 302) {
+        const redirectUrl = data.headers.Location;
         if (redirectUrl) {
           window.location.href = redirectUrl;
         } else {
