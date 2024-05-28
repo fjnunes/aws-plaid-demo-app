@@ -38,10 +38,14 @@ export default function Protected() {
       logger.debug('GET /v1/statements/download response:', data);
       
       if (statusCode === 302) {
-        const redirectUrl = headers.get('Location');
-        window.location.href = redirectUrl;
+        const redirectUrl = headers.Location;
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        } else {
+          logger.error('No redirect URL found in the response headers');
+        }
       } else {
-        logger.error('Failed to get download URL');
+        logger.error('Unexpected statusCode:', data.statusCode);
       }
 
     } catch (err) {
