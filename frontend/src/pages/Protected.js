@@ -60,8 +60,7 @@ export default function Protected() {
   return (
     <Flex direction="column">
       <Plaid label="Add a new account" product="statements" getItems={getItems} />
-      <p>Are you done linking your accounts?</p>
-      <Button onClick={downloadStatements}>Download your statements</Button>
+      <Button onClick={downloadStatements}>Are you done linking your accounts? Click to download your statements</Button>
 
       {(items && items.length) ? (
         <View>
