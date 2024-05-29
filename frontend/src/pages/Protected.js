@@ -58,7 +58,7 @@ export default function Protected() {
   }, []);
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" align="center" justify="center">
       <Flex direction="row">
         <Plaid label="Add new accounts" product="statements" getItems={getItems} />
         <Button onClick={downloadStatements}>Done with linking your accounts? Download all your statements</Button>
