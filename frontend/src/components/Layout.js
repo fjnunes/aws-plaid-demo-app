@@ -26,7 +26,7 @@ export default function Layout() {
       </nav>
       <Heading level={2}>Lab360 Disclosures</Heading>
       <View>
-        {route === 'authenticated' ? `Welcome ${user.signInDetails?.loginId}` : 'Please Login!'}
+        {/* {route === 'authenticated' ? `Welcome ${user.signInDetails?.loginId}` : 'Please Login!'} */}
         <p>Statements from all your accounts in one place: checking, savings, brokerages, retirement, student loans, mortgages, etc.</p>
       </View>
 
