@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { get, post } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { View, Heading, Flex, Box, Button } from '@aws-amplify/ui-react';
+import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
@@ -59,12 +59,12 @@ export default function Protected() {
 
   return (
     <Flex direction="column" align="center" justify="center">
-      <Box width="100%" display="flex" justifyContent="center">
+      <View width="100%" display="flex" justifyContent="center">
         <Flex direction="row" align="center" justify="center"> 
           <Plaid label="Add new accounts" product="statements" getItems={getItems} />
           <Button onClick={downloadStatements}>Done with linking your accounts? Download all your statements</Button>
         </Flex>
-      </Box>
+      </View>
       
       {(items && items.length) ? (
         <View>
