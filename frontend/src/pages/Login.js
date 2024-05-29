@@ -13,14 +13,13 @@ export default function Login() {
     SignUp: {
       Footer() {
         return (
-          <View textAlign="center">
+          <View>
             <strong>Password Policy</strong>:
             <ul>
               <li>Minimum of 8 characters</li>
               <li>At least one lowercase character</li>
               <li>At least one uppercase character</li>
               <li>At least one number character</li>
-              <li>At least one symbol character</li>
             </ul>
           </View>
         );
