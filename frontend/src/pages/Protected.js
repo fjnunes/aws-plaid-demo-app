@@ -59,9 +59,11 @@ export default function Protected() {
 
   return (
     <Flex direction="column">
-      <Plaid label="Add new accounts" product="statements" getItems={getItems} />
-      <Button onClick={downloadStatements}>Done with linking your accounts? Download all your statements</Button>
-
+      <Flex direction="row">
+        <Plaid label="Add new accounts" product="statements" getItems={getItems} />
+        <Button onClick={downloadStatements}>Done with linking your accounts? Download all your statements</Button>
+      </Flex>
+      
       {(items && items.length) ? (
         <View>
           <Institutions institutions={items} />
