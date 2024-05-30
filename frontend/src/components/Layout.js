@@ -24,7 +24,7 @@ export default function Layout() {
           <Button onClick={() => logOut()}>Logout</Button>
         )}
       </nav>
-      <Heading level={2}>Disclosure Pro</Heading>
+      <Heading level={2}>Disclosures Pro</Heading>
       <View>
         {/* {route === 'authenticated' ? `Welcome ${user.signInDetails?.loginId}` : 'Please Login!'} */}
         <p>Statements from all your accounts in one place: checking, savings, brokerages, retirement, student loans, mortgages, etc.</p>
