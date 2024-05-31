@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api';
-import { get, post } from 'aws-amplify/api';
+import { get } from 'aws-amplify/api';
 import { ConsoleLogger } from 'aws-amplify/utils';
-import { View, Heading, Flex, Button } from '@aws-amplify/ui-react';
+import { View, Heading, Flex, Button, Text } from '@aws-amplify/ui-react';
 import { getItems as GetItems } from '../graphql/queries';
 import Plaid from '../components/Plaid';
 import Institutions from '../components/Institutions';
@@ -13,6 +13,7 @@ const apiName = "plaidapi";
 
 export default function Protected() {
   const [items, setItems] = useState([]);
+  const [downloadStatus, setDownloadStatus] = useState("");
   const client = generateClient();
 
   const getItems = async () => {
@@ -28,30 +29,39 @@ export default function Protected() {
   }
 
   const downloadStatements = async () => {
+    setDownloadStatus("Starting download process...");
     
-    try {
-      const { body } = await get({
-        apiName,
-        path: '/v1/statements/download'
-      }).response;
-      const data = await body.json();
-      logger.debug('GET /v1/statements/download response:', data);
-      
-      if (data.statusCode === 302) {
-        const redirectUrl = data.headers.Location;
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
-        } else {
-          logger.error('No redirect URL found in the response headers');
-        }
-      } else {
-        logger.error('Unexpected statusCode:', data.statusCode);
-      }
+    const pollDownload = async () => {
+      try {
+        const response = await get({
+          apiName,
+          path: '/v1/statements/download'
+        });
+        const data = await response.json();
+        logger.debug('GET /v1/statements/download response:', data);
 
-    } catch (err) {
-      logger.error('unable to download statement:', err);
-    }
-  }
+        if (data.statusCode === 302) {
+          const redirectUrl = data.headers.Location;
+          if (redirectUrl) {
+            setDownloadStatus("Download ready. Redirecting...");
+            window.location.href = redirectUrl;
+          } else {
+            logger.error('No redirect URL found in the response headers');
+            setDownloadStatus("Error: No redirect URL found in the response headers");
+          }
+        } else {
+          logger.info('Statements not ready yet, retrying...');
+          setDownloadStatus("Statements not ready yet, retrying...");
+          setTimeout(pollDownload, 5000); // Retry after 5 seconds
+        }
+      } catch (err) {
+        logger.error('Unable to download statement:', err);
+        setDownloadStatus("Error: Unable to download statement. Please try again later.");
+      }
+    };
+
+    pollDownload();
+  };
 
   useEffect(() => {
     getItems();
@@ -65,7 +75,11 @@ export default function Protected() {
           <Button onClick={downloadStatements}>Done with linking your accounts? Download all your statements</Button>
         </Flex>
       </View>
-      
+
+      {downloadStatus && (
+        <Text>{downloadStatus}</Text>
+      )}
+            
       {(items && items.length) ? (
         <View>
           <Institutions institutions={items} />
@@ -73,6 +87,7 @@ export default function Protected() {
       ) : (
         <div />
       )}
+
     </Flex>
   );
 }
