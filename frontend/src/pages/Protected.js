@@ -37,11 +37,10 @@ export default function Protected() {
           apiName,
           path: '/v1/statements/download'
         });
-        const data = await response.json();
-        logger.debug('GET /v1/statements/download response:', data);
+        logger.debug('GET /v1/statements/download response:', response);
 
-        if (data.statusCode === 302) {
-          const redirectUrl = data.headers.Location;
+        if (response.statusCode === 302) {
+          const redirectUrl = response.headers.Location;
           if (redirectUrl) {
             setDownloadStatus("Download ready. Redirecting...");
             window.location.href = redirectUrl;
@@ -75,11 +74,7 @@ export default function Protected() {
           <Button onClick={downloadStatements}>Done with linking your accounts? Download all your statements</Button>
         </Flex>
       </View>
-
-      {downloadStatus && (
-        <Text>{downloadStatus}</Text>
-      )}
-            
+      
       {(items && items.length) ? (
         <View>
           <Institutions institutions={items} />
@@ -88,6 +83,9 @@ export default function Protected() {
         <div />
       )}
 
+      {downloadStatus && (
+        <Text>{downloadStatus}</Text>
+      )}
     </Flex>
   );
 }
