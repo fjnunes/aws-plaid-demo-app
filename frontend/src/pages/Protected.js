@@ -43,7 +43,7 @@ export default function Protected() {
         if (data.statusCode === 302) {
           const redirectUrl = data.headers.Location;
           if (redirectUrl) {
-            // setDownloadStatus("Download ready. Redirecting...");
+            setDownloadStatus("");
             window.location.href = redirectUrl;
           } else {
             logger.error('No redirect URL found in the response headers');
