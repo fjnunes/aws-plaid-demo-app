@@ -37,7 +37,7 @@ export default function Protected() {
           apiName,
           path: '/v1/statements/download'
         });
-        const data = response.body;
+        const data = JSON.parse(response.body);
         logger.debug('GET /v1/statements/download response:', data);
 
         if (data.statusCode === 302) {
