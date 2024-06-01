@@ -33,15 +33,15 @@ export default function Protected() {
     
     const pollDownload = async () => {
       try {
-        const response = await get({
+        const { body } = await get({
           apiName,
           path: '/v1/statements/download'
-        });
-        const body = await response.json();
-        logger.debug('GET /v1/statements/download response:', body);
+        }).response;
+        const data = await body.json();
+        logger.debug('GET /v1/statements/download response:', data);
 
-        if (body.statusCode === 302) {
-          const redirectUrl = body.headers.Location;
+        if (data.statusCode === 302) {
+          const redirectUrl = data.headers.Location;
           if (redirectUrl) {
             setDownloadStatus("Download ready. Redirecting...");
             window.location.href = redirectUrl;
