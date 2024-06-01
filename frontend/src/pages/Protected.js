@@ -37,11 +37,11 @@ export default function Protected() {
           apiName,
           path: '/v1/statements/download'
         });
-        const data = JSON.parse(response.body);
-        logger.debug('GET /v1/statements/download response:', data);
+        const body = await response.json();
+        logger.debug('GET /v1/statements/download response:', body);
 
-        if (data.statusCode === 302) {
-          const redirectUrl = data.headers.Location;
+        if (body.statusCode === 302) {
+          const redirectUrl = body.headers.Location;
           if (redirectUrl) {
             setDownloadStatus("Download ready. Redirecting...");
             window.location.href = redirectUrl;
