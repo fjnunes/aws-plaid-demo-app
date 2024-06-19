@@ -72,7 +72,7 @@ export default function Protected() {
       <View width="100%" display="flex" justifyContent="center">
         <Flex direction="row" align="center" justify="center"> 
           <Plaid label="Add bank accounts" product="statements" getItems={getItems} />
-          <Plaid label="Add payroll income" product="income_verification" getItems={getItems} />
+          <Plaid label="Add payroll income" product="income_verification" getItems={getItems} /> 
           <Button onClick={downloadStatements}>Done with linking your accounts? Download all your statements</Button>
         </Flex>
       </View>
